@@ -88,11 +88,32 @@ e2e/
 
 ## 🔧 Konfiguracja
 
+### ⚠️ WAŻNE: Automatyczny serwer testowy
+
+**Playwright automatycznie uruchamia serwer z testową bazą danych!**
+
+Gdy uruchamiasz `npm run test:e2e`, Playwright:
+1. ✅ Sprawdza czy `localhost:4321` jest zajęty
+2. ✅ Jeśli NIE → uruchamia `NODE_ENV=test npm run dev`
+3. ✅ Serwer startuje z **bazą testową w chmurze** (nie lokalną!)
+4. ✅ Czeka aż serwer odpowie
+5. ✅ Uruchamia testy
+6. ✅ Automatycznie wyłącza serwer po testach
+
+**DLATEGO MUSISZ ZATRZYMAĆ `npm run dev` PRZED TESTAMI!**
+
+Jeśli dev server już działa:
+- ❌ Playwright użyje istniejącego serwera (lokalnej bazy!)
+- ❌ Testy będą modyfikować dane deweloperskie
+- ❌ Autentykacja może nie działać (inni użytkownicy)
+
 ### Porty i adresy:
 
 - **Serwer Astro:** `http://localhost:4321`
 - **Playwright baseURL:** `http://localhost:4321`
 - **Automatyczne uruchomienie:** ✅ Tak (webServer config)
+- **Baza danych testowa:** `https://vbqbculbaumfxjdaajoc.supabase.co`
+- **Baza danych dev:** `http://127.0.0.1:54321`
 
 ### Browser:
 

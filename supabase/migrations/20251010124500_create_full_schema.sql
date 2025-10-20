@@ -3,8 +3,6 @@
 -- note: the users table is managed by supabase auth
 -- created at: 2025-10-10 12:45:00 utc
 
-create extension if not exists "uuid-ossp";
-
 -- table: profiles
 create table profiles (
   user_id uuid primary key references auth.users(id) on delete cascade,
@@ -22,7 +20,7 @@ create policy profiles_delete on profiles for delete to authenticated using (aut
 
 -- table: categories
 create table categories (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   name varchar(100) not null unique,
   description text,
   image_url varchar(500),
@@ -43,11 +41,11 @@ create policy categories_delete on categories for delete to authenticated using 
 
 -- table: exercises
 create table exercises (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   name varchar(100) not null,
   description text,
   icon_svg text,
-  difficulty varchar(50) not null,
+  difficulty varchar(50) not null check (difficulty in ('easy', 'medium', 'hard')),
   category_id uuid not null references categories(id) on delete restrict,
   created_at timestamp with time zone default now() not null
 );
@@ -66,7 +64,7 @@ create policy exercises_delete on exercises for delete to authenticated using (
 
 -- table: training_plans
 create table training_plans (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users(id) on delete cascade,
   name varchar(100) not null,
   description text,
@@ -102,7 +100,7 @@ create policy plan_exercises_delete on plan_exercises for delete to authenticate
 
 -- table: plan_exercise_sets
 create table plan_exercise_sets (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   training_plan_id uuid not null references training_plans(id) on delete cascade,
   exercise_id uuid not null references exercises(id),
   set_order integer not null,
@@ -126,7 +124,7 @@ create policy plan_exercise_sets_delete on plan_exercise_sets for delete to auth
 
 -- table: workouts
 create table workouts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users(id) on delete cascade,
   training_plan_id uuid references training_plans(id),
   start_time timestamp with time zone not null,
@@ -141,7 +139,7 @@ create policy workouts_delete on workouts for delete to authenticated using (aut
 
 -- table: workout_sets
 create table workout_sets (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   workout_id uuid not null references workouts(id) on delete cascade,
   exercise_id uuid not null references exercises(id),
   set_order integer not null,

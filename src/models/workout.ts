@@ -15,9 +15,7 @@ export interface ExerciseTemplate {
   name: string;
   description?: string;
   category: Category["id"];
-  muscleGroups?: string[]; // np. ["chest", "triceps"]
-  equipment?: string[]; // np. ["barbell", "bench"]
-  difficulty?: "beginner" | "intermediate" | "advanced";
+  difficulty?: "easy" | "medium" | "hard";
   instructions?: string;
   videoUrl?: string;
   imageUrl?: string;

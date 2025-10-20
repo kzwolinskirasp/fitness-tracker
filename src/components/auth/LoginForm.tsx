@@ -99,6 +99,7 @@ export function LoginForm({ redirectUrl = "/dashboard" }: LoginFormProps) {
               type="email"
               placeholder="twoj@email.com"
               {...register("email")}
+              required
               disabled={isSubmitting}
               className={`h-12 ${errors.email && touchedFields.email ? "border-destructive" : ""}`}
               aria-invalid={errors.email && touchedFields.email ? "true" : "false"}
@@ -127,6 +128,7 @@ export function LoginForm({ redirectUrl = "/dashboard" }: LoginFormProps) {
               type="password"
               placeholder="••••••••"
               {...register("password")}
+              required
               disabled={isSubmitting}
               className={`h-12 ${errors.password && touchedFields.password ? "border-destructive" : ""}`}
               aria-invalid={errors.password && touchedFields.password ? "true" : "false"}

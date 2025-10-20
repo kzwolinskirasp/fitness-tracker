@@ -3,8 +3,16 @@ import { defineMiddleware } from "astro:middleware";
 
 import type { Database } from "../db/database.types.ts";
 
-const supabaseUrl = import.meta.env.SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.SUPABASE_KEY;
+// CRITICAL: Use process.env instead of import.meta.env
+// process.env is set at runtime (works in dev mode with NODE_ENV=test)
+// import.meta.env is set at build time (doesn't update when NODE_ENV changes in dev)
+const supabaseUrl = process.env.SUPABASE_URL || import.meta.env.SUPABASE_URL;
+const supabaseAnonKey = process.env.SUPABASE_KEY || import.meta.env.SUPABASE_KEY;
+
+// Log database connection in test mode for debugging
+if (process.env.NODE_ENV === "test") {
+  console.log("[TEST MODE] Using database:", supabaseUrl?.substring(0, 50) + "...");
+}
 
 // Protected routes that require authentication
 const PROTECTED_ROUTES = ["/dashboard", "/profile", "/workouts", "/goals", "/progress", "/plans"];

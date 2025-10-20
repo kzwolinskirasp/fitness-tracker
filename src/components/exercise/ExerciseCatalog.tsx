@@ -16,16 +16,22 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const DIFFICULTY_MAP = {
-  łatwe: 1,
-  średnie: 2,
-  trudne: 3,
+  easy: 1,
+  medium: 2,
+  hard: 3,
+};
+
+const DIFFICULTY_LABELS = {
+  easy: "Łatwy",
+  medium: "Średni",
+  hard: "Trudny",
 };
 
 const DIFFICULTY_OPTIONS = [
   { value: "all", label: "Wszystkie poziomy" },
-  { value: "łatwe", label: "Łatwe" },
-  { value: "średnie", label: "Średnie" },
-  { value: "trudne", label: "Trudne" },
+  { value: "easy", label: "Łatwy" },
+  { value: "medium", label: "Średni" },
+  { value: "hard", label: "Trudny" },
 ];
 
 const CATEGORY_COLORS: Record<string, { bg: string; text: string }> = {
@@ -152,16 +158,20 @@ export function ExerciseCatalog({
    */
   const renderDifficultyIndicator = (difficulty: string) => {
     const level = DIFFICULTY_MAP[difficulty as keyof typeof DIFFICULTY_MAP] || 1;
+    const label = DIFFICULTY_LABELS[difficulty as keyof typeof DIFFICULTY_LABELS] || difficulty;
     const color = level === 1 ? "bg-green-500" : level === 2 ? "bg-yellow-500" : "bg-red-500";
 
     return (
-      <div className="flex items-center gap-0.5">
-        {[1, 2, 3].map((dot) => (
-          <div
-            key={dot}
-            className={`h-2 w-4 rounded-full ${dot <= level ? color : "bg-neutral-300 dark:bg-neutral-700"}`}
-          />
-        ))}
+      <div className="flex items-center gap-1.5">
+        <span className="text-xs">{label}</span>
+        <div className="flex items-center gap-0.5">
+          {[1, 2, 3].map((dot) => (
+            <div
+              key={dot}
+              className={`h-2 w-4 rounded-full ${dot <= level ? color : "bg-neutral-300 dark:bg-neutral-700"}`}
+            />
+          ))}
+        </div>
       </div>
     );
   };

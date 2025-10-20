@@ -4,12 +4,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Development Commands
 
-- `npm run dev` - Start development server on port 3000
+- `npm run dev` - Start development server on port 4321
 - `npm run build` - Build for production with SSR
 - `npm run preview` - Preview production build
 - `npm run lint` - Run ESLint with React Compiler plugin
 - `npm run lint:fix` - Auto-fix ESLint issues
 - `npm run format` - Format code with Prettier
+- `npm run check:env` - Verify development environment variables
+- `npm run check:env:test` - Verify test environment variables
+- `npm run test:e2e` - Run Playwright E2E tests
+- `npm run test:e2e:ui` - Run E2E tests with UI mode
+- `npm run test:e2e:debug` - Debug E2E tests
 
 ## Tech Stack
 
@@ -99,14 +104,6 @@ The app uses a three-tier structure for workout tracking:
    - Has `order` field for sequencing exercises in the workout
    - Can track completion status per exercise
 
-### Mock Data (Until Supabase Integration)
-
-Mock data available in `src/lib/mocks/`:
-- `exercise-templates.ts` - 20 predefined exercises across all categories
-- `workouts.ts` - Sample workout sessions and performed exercises
-- Helper functions for querying mock data (by ID, user, status, etc.)
-- Import via barrel export: `import { mockExerciseTemplates, getWorkoutById } from "@/lib/mocks"`
-
 ## Code Quality
 
 ### ESLint Configuration
@@ -134,9 +131,58 @@ Mock data available in `src/lib/mocks/`:
 - Use useMemo for expensive calculations
 - Prefer useTransition for non-urgent updates
 
-## Backend Integration (Planned)
+## Backend Integration
 
-- Supabase for authentication and database
-- Use `SupabaseClient` type from `src/db/supabase.client.ts` (not from @supabase/supabase-js)
+### Supabase Database
+
+- **Development database** - Local or cloud instance for development (`.env`)
+- **Test database** - Dedicated cloud database for E2E tests (`.env.test`)
 - Access via `context.locals.supabase` in Astro routes
+- Use `SupabaseClient` type from `src/db/supabase.client.ts` (not from @supabase/supabase-js)
 - Validate data with Zod schemas
+
+### Environment Configuration
+
+The project uses **separate databases** for development and testing:
+
+1. **Development** (`.env`)
+   - Used when running `npm run dev`
+   - Can be local Supabase or cloud development database
+
+2. **Test** (`.env.test`)
+   - Used when running `npm run test:e2e`
+   - Always uses dedicated cloud test database
+   - Contains test users created via migrations
+
+**How environment switching works:**
+
+- `astro.config.mjs` detects `NODE_ENV` and loads appropriate `.env` file
+- Loaded variables are injected into `process.env` (not just `import.meta.env`)
+- **CRITICAL:** Middleware uses `process.env.SUPABASE_URL` and `process.env.SUPABASE_KEY`
+- `process.env` is runtime-based, so it works in dev mode with `NODE_ENV=test`
+- `import.meta.env` is build-time only and doesn't update in dev mode
+
+**Verifying correct environment:**
+
+```bash
+# Check development environment
+npm run check:env
+
+# Check test environment (should show different SUPABASE_URL)
+npm run check:env:test
+```
+
+### Test Database Setup
+
+E2E tests use a dedicated test database to avoid polluting development data:
+
+1. Test database URL is in `.env.test` (different from `.env`)
+2. Test users are created via migrations in `supabase/migrations/`
+3. Test credentials are in `.env.test` (E2E_USERNAME, E2E_PASSWORD)
+4. Playwright automatically uses test database when running tests
+
+**Common issues:**
+
+- **"Invalid credentials" in tests** → Verify test user exists in test database
+- **Tests modify local data** → Check `npm run check:env:test` shows different URL
+- **Environment variables not loaded** → Restart dev server and tests
