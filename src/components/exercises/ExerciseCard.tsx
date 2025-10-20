@@ -1,6 +1,20 @@
 import { memo } from "react";
 import type { ExerciseTemplate } from "@/models";
-import { DIFFICULTY_LABELS, MUSCLE_GROUP_LABELS, EQUIPMENT_LABELS } from "@/lib/constants/exercise-labels";
+
+const DIFFICULTY_LABELS = {
+  easy: {
+    label: "Łatwy",
+    class: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
+  },
+  medium: {
+    label: "Średni",
+    class: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
+  },
+  hard: {
+    label: "Trudny",
+    class: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
+  },
+} as const;
 
 interface ExerciseCardProps {
   exercise: ExerciseTemplate;
@@ -9,7 +23,7 @@ interface ExerciseCardProps {
 
 export const ExerciseCard = memo(function ExerciseCard({ exercise, onAddToWorkout }: ExerciseCardProps) {
   return (
-    <article className="exercise-card group border rounded-lg bg-card hover:border-primary hover:shadow-lg transition-all duration-200 overflow-hidden grid grid-rows-[auto_auto_auto_1fr_auto] h-full">
+    <article className="exercise-card group border rounded-lg bg-card hover:border-primary hover:shadow-lg transition-all duration-200 overflow-hidden grid grid-rows-[auto_auto_1fr_auto] h-full">
       {/* Header karty - stała wysokość */}
       <div className="p-4 border-b bg-muted/30 min-h-[120px] flex flex-col justify-between">
         <div>
@@ -32,37 +46,6 @@ export const ExerciseCard = memo(function ExerciseCard({ exercise, onAddToWorkou
             <span className={`text-xs font-medium px-2 py-1 rounded ${DIFFICULTY_LABELS[exercise.difficulty].class}`}>
               {DIFFICULTY_LABELS[exercise.difficulty].label}
             </span>
-          </div>
-        )}
-      </div>
-
-      {/* Partie mięśniowe i sprzęt - stała wysokość */}
-      <div className="p-3 space-y-2 border-b bg-muted/10 min-h-[100px]">
-        {/* Partie mięśniowe */}
-        {exercise.muscleGroups && exercise.muscleGroups.length > 0 && (
-          <div>
-            <span className="text-xs font-medium text-muted-foreground block mb-1">Partie mięśniowe:</span>
-            <div className="flex flex-wrap gap-1">
-              {exercise.muscleGroups.map((muscle) => (
-                <span key={muscle} className="text-xs bg-primary/5 text-primary px-2 py-0.5 rounded">
-                  {MUSCLE_GROUP_LABELS[muscle] || muscle}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Sprzęt */}
-        {exercise.equipment && exercise.equipment.length > 0 && (
-          <div>
-            <span className="text-xs font-medium text-muted-foreground block mb-1">Sprzęt:</span>
-            <div className="flex flex-wrap gap-1">
-              {exercise.equipment.map((item) => (
-                <span key={item} className="text-xs bg-muted text-muted-foreground px-2 py-0.5 rounded">
-                  {EQUIPMENT_LABELS[item] || item}
-                </span>
-              ))}
-            </div>
           </div>
         )}
       </div>

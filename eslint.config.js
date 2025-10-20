@@ -100,6 +100,24 @@ const hooksConfig = tseslint.config({
   },
 });
 
+// Scripts configuration (Node.js environment)
+const scriptsConfig = tseslint.config({
+  files: ["scripts/**/*.{js,mjs,ts}"],
+  languageOptions: {
+    globals: {
+      process: true,
+      console: true,
+      Buffer: true,
+      __dirname: true,
+      __filename: true,
+      URL: true,
+    },
+  },
+  rules: {
+    "no-console": "off", // Console is expected in Node.js scripts
+  },
+});
+
 export default tseslint.config(
   includeIgnoreFile(gitignorePath),
   {
@@ -119,6 +137,7 @@ export default tseslint.config(
   apiConfig,
   componentConfig,
   hooksConfig,
+  scriptsConfig,
   e2eConfig,
   testConfig,
   eslintPluginAstro.configs["flat/recommended"],

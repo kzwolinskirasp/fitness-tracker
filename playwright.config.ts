@@ -3,9 +3,10 @@ import dotenv from "dotenv";
 
 /**
  * Read environment variables from file.
+ * Uses .env.test for e2e tests to isolate test data from production.
  * https://github.com/motdotla/dotenv
  */
-dotenv.config();
+dotenv.config({ path: ".env.test" });
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -60,10 +61,20 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: "npm run dev",
+    command: "NODE_ENV=test npm run dev",
     url: "http://localhost:4321",
-    reuseExistingServer: !process.env.CI,
+    // CRITICAL: Never reuse existing dev server
+    // We need a fresh server with NODE_ENV=test to use test database
+    // If you have npm run dev running, STOP IT before running tests
+    reuseExistingServer: false,
     timeout: 120000,
+    env: {
+      NODE_ENV: "test",
+      // Explicitly pass test environment variables to the dev server
+      // This ensures the app connects to the test database in the cloud
+      SUPABASE_URL: process.env.SUPABASE_URL || "",
+      SUPABASE_KEY: process.env.SUPABASE_KEY || "",
+    },
   },
 
   /* Global timeout for each test */

@@ -5,16 +5,16 @@ import type { Page } from "@playwright/test";
 
 /**
  * Login helper for E2E tests
- * Uses credentials from environment variables (.env file)
+ * Uses credentials from environment variables (.env.test file)
  *
  * @param page - Playwright page object
- * @param email - User email (optional, defaults to USERNAME from .env)
- * @param password - User password (optional, defaults to PASSWORD from .env)
+ * @param email - User email (optional, defaults to E2E_USERNAME from .env.test)
+ * @param password - User password (optional, defaults to E2E_PASSWORD from .env.test)
  */
 export async function loginAsUser(
   page: Page,
-  email: string = process.env.USERNAME || "",
-  password: string = process.env.PASSWORD || ""
+  email: string = process.env.E2E_USERNAME || "",
+  password: string = process.env.E2E_PASSWORD || ""
 ): Promise<void> {
   console.log(`[E2E Auth] Logging in as: ${email}`);
 
